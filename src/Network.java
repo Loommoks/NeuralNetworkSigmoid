@@ -201,7 +201,7 @@ public class Network {
     }
 
     //--8-- Выполняем Backpropagation для массива сэмплов до достижения желаемой величины ошибки
-    public void RunBPA (double[][] inM, double[][] outM, double accuracy){
+    public void runBPA(double[][] inM, double[][] outM, double accuracy){
         double tE=2;
         double tempTE=2;
         int counter=0;
