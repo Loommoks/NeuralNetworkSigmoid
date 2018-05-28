@@ -1,3 +1,4 @@
+/*
 public class Neuron {
 
     private int layerLevel;
@@ -159,4 +160,4 @@ public class Neuron {
         }
     }
 
-}
+}*/

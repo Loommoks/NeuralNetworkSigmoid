@@ -1,31 +1,32 @@
+import Neurons.HiddenNeuron;
+import Neurons.InNeuron;
+import Neurons.NeuronBase;
+
 public class Network {
-    Neuron[][] neuronNet;
+    NeuronBase[][] neuronNet;
     double[][] sigmaTemp;
     double[][] sigmaFull;
 
-    public void initializeNetwork (int[] l){
-        neuronNet = new Neuron[l.length][];
-        sigmaTemp = new double[l.length-1][];
-        sigmaFull = new double[l.length-1][];
+    public void initializeNetwork (int[] neuronsInLevel){
+        neuronNet = new NeuronBase[neuronsInLevel.length][];
 
-        for (int il =0; il<neuronNet.length; il++){
-            neuronNet[il] = new Neuron[l[il]];
-            if (il>0) {
-                sigmaTemp[il-1] = new double[l[il]];
-                sigmaFull[il-1] = new double[l[il]];
-            }
-            for (int jninl=0; jninl<neuronNet[il].length;jninl++){
-                    if (il > 0) {
-                        neuronNet[il][jninl] = new Neuron();
-                        neuronNet[il][jninl].initializeNeuron(neuronNet[il - 1].length);
-                        neuronNet[il][jninl].setRandomWeight();
-                    } else {
-                        neuronNet[il][jninl] = new InputNeuron();
-                        neuronNet[il][jninl].initializeZeroLevelNeuron();
-                    }
-                    neuronNet[il][jninl].setNeuronNumber(jninl);
-                    neuronNet[il][jninl].setLayerLevel(il);
-            }
+        //Создаем входной слой
+        int inputsCount = neuronsInLevel[0];
+        neuronNet[0] = new NeuronBase[inputsCount];
+        for (int j=0; j<inputsCount;j++)
+            neuronNet[0][j] = new InNeuron(j);
+
+        //Создаем остальные слои
+        sigmaTemp = new double[neuronsInLevel.length-1][];
+        sigmaFull = new double[neuronsInLevel.length-1][];
+
+        for (int level =1; level<neuronNet.length; level++) {
+            neuronNet[level] = new NeuronBase[neuronsInLevel[level]];
+            sigmaTemp[level - 1] = new double[neuronsInLevel[level]];
+            sigmaFull[level - 1] = new double[neuronsInLevel[level]];
+            int previousLevelLength = neuronNet[level - 1].length;
+            for (int j=0; j<neuronNet[level].length;j++)
+                neuronNet[level][j] = new HiddenNeuron(level,j, previousLevelLength);
         }
         initializeDarkSide();
     }
@@ -34,12 +35,14 @@ public class Network {
         for (int i=1;i<neuronNet.length;i++){
             if(i<=neuronNet.length-2) {
                 for (int j = 0; j < neuronNet[i].length; j++) {
-                    neuronNet[i][j].initializeNeuronDarkSide(neuronNet[i+1].length);
+                    ((HiddenNeuron)neuronNet[i][j])
+                            .initializeNeuronDarkSide(neuronNet[i+1].length);
                 }
             }else {
                 if (i==neuronNet.length-1){
                     for (int j = 0; j < neuronNet[i].length; j++) {
-                        neuronNet[i][j].initializeNeuronOutDarkSide();
+                        ((HiddenNeuron)neuronNet[i][j])
+                                .initializeNeuronOutDarkSide();
                     }
                 }
             }
@@ -152,7 +155,7 @@ public class Network {
     public void calcDWForLayerI(int i){
 
         for (int j=0;j<neuronNet[i].length;j++){
-            neuronNet[i][j].calcDW();
+            ((HiddenNeuron)(neuronNet[i][j])).calcDW();
         }
     }
 
@@ -160,7 +163,7 @@ public class Network {
     public void applyDW(){
         for (int i=1;i<neuronNet.length;i++){
             for(int j=0;j<neuronNet[i].length;j++){
-                neuronNet[i][j].applyDW();
+                ((HiddenNeuron)neuronNet[i][j]).applyDW();
             }
         }
     }
