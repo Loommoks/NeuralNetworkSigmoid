@@ -1,50 +1,36 @@
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 public class Neuron {
 
-    private int layerlevel;
+    private int layerLevel;
     private int neuronNumber;
     private double[] inputsWeight;
     private double[] inputsValue;
     private double out;
-    double sum;
+    private double sum;
 
-    double[] inputsSigma;
-    double sigmaSum;
-    double sigmaToTrasfer;
-    double[] vector;
-    double[] dW;
-    double[] lastDW;
+    private double[] inputsSigma;
+    private double sigmaSum;
+    private double sigmaToTrasfer;
+    private double[] vector;
+    private double[] dW;
+    private double[] lastDW;
 
-    double alpha=0.2; //скорость обучения
-    double beta=0.1; //инерция
+    private double alpha=0.2; //скорость обучения
+    private double beta=0.1; //инерция
 
 
     //-----------Геттеры и сеттеры-------------------//
 
-    public void setLayerLevel(int l){
-        layerlevel = l;
+    public void setLayerLevel(int l){ layerLevel = l; }
+
+    public int getLayerLevel(){
+        return layerLevel;
     }
 
-    public int getLayerlevel(){
-        return layerlevel;
-    }
-
-    public void setNeuronNumber(int l){
-        neuronNumber = l;
-    }
+    public void setNeuronNumber(int l){  neuronNumber = l; }
 
     public int getNeuronNumber(){
         return neuronNumber;
     }
-
-    public void setInputWeightDimension(int l){
-        inputsWeight = new double[l];
-    }
-
-    public int getInputWeightDimension(){ return inputsWeight.length; }
-
-    public void setInputWeight(double w, int inputNumber){ inputsWeight[inputNumber] = w;}
 
     public double getInputWeight(int inputNumber){return inputsWeight[inputNumber];}
 
@@ -54,15 +40,9 @@ public class Neuron {
 
     public void setInputsSigma(double s, int num){inputsSigma[num]=s;}
 
-    public double getInputsSigma (int j){return inputsSigma[j];}
-
     public void setSigmaSum (double s){sigmaSum =s;}
 
-    public double getSigmaSum (){return sigmaSum;}
-
     public double getSigmaToTrasfer (){return sigmaToTrasfer;}
-
-    public void setSigmaToTrasfer (double s){sigmaToTrasfer=s;}
 
     public double getInputValue(int num){return inputsValue[num];}
 
@@ -71,14 +51,6 @@ public class Neuron {
     }
 
     public void setOut(double o){out = o;}
-
-    public double[] getEWVector(){
-        return vector;
-    }
-
-    public double getEWVector(int j){ return vector[j];}
-
-    public int getEWVectorLenght (){return vector.length;}
 
     public void setEWVector(double[] v){vector = v;}
 
@@ -104,7 +76,7 @@ public class Neuron {
 
     //Инициализация нейрона
     public void initializeNeuron (int inputsMassiveLenght){
-        layerlevel = 0;
+        layerLevel = 0;
         neuronNumber = 0;
         inputsWeight = new double[inputsMassiveLenght];
         inputsValue = new double[inputsMassiveLenght];
@@ -133,7 +105,7 @@ public class Neuron {
 
     //Инициализация входного нейрона для прямого распространения
     public void initializeZeroLevelNeuron (){
-        layerlevel = 0;
+        layerLevel = 0;
         neuronNumber = 0;
         inputsWeight = new double[1];
         inputsWeight[0] = 1;
@@ -144,17 +116,6 @@ public class Neuron {
         sigmaToTrasfer=0;
         vector = new double[1];
         dW = new double[1];
-    }
-
-    //Инициализация нейрона смещения
-    //!!!!!!!!!!Доделать
-    public void initializeBiasNeuron (){
-        layerlevel = 0;
-        neuronNumber = 0;
-        inputsWeight = new double[1];
-        inputsWeight[0] = 1;
-        inputsValue = new double[1];
-        out = 0;
     }
 
     //Устанавливаем рандомные веса

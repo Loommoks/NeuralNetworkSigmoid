@@ -51,7 +51,7 @@ public class Network {
         for (int il =0; il<neuronNet.length; il++){
 
             for (int jninl=0; jninl<neuronNet[il].length;jninl++){
-                System.out.print("Нейрон[" +neuronNet[il][jninl].getLayerlevel() +"][" +neuronNet[il][jninl].getNeuronNumber() +"]  ");
+                System.out.print("Нейрон[" +neuronNet[il][jninl].getLayerLevel() +"][" +neuronNet[il][jninl].getNeuronNumber() +"]  ");
                 System.out.print("Выход:" +neuronNet[il][jninl].getOut()+"  ");
                 double[] wMassive= neuronNet[il][jninl].getInputWeight();
                 for (int k=0;k<wMassive.length;k++){
