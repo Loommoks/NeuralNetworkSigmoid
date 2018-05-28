@@ -3,9 +3,16 @@ public class NetworkStarter {
     public static final double NETWORK_LEARN_ACCURACY = 0.001;
 
     public static void main (String[] args){
+
         int inputsCount  = 2;
-        int outputsCount = 1;
-        int[] neuronsInLayers ={inputsCount,4,outputsCount};
+        int hiddenLayerCount = 3;
+        int outputsCount = 2;
+        
+        int[] neuronsInLayers = {
+                inputsCount,
+                hiddenLayerCount,
+                outputsCount
+        };
 
         Network Net = new Network();
         Net.initializeNetwork(neuronsInLayers);
@@ -16,7 +23,7 @@ public class NetworkStarter {
     }
 
     private static double[][] getSampleAnswers() {
-        return new double[][]{{0},{1},{1},{0}};
+        return new double[][]{{0,1},{1,0},{1,0},{0,1}};
     }
 
 
