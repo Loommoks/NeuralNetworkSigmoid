@@ -2,10 +2,26 @@ import Neurons.HiddenNeuron;
 import Neurons.InNeuron;
 import Neurons.NeuronBase;
 
+
 public class Network {
     NeuronBase[][] neuronNet;
     double[][] sigmaTemp;
     double[][] sigmaFull;
+    double networkError;
+    int learningIterations=0;
+
+    public double getNetworkError(){
+        return networkError;
+    }
+    public int getLearningIterations(){return learningIterations;}
+
+    public int[] getNetworkDimension(){
+        int[] neuronsInLayers = new int[neuronNet.length];
+        for (int k=0;k<neuronNet.length;k++){
+            neuronsInLayers[k]=neuronNet[k].length;
+        }
+        return neuronsInLayers;
+    }
 
     public void initializeNetwork (int[] neuronsInLevel){
         neuronNet = new NeuronBase[neuronsInLevel.length][];
@@ -26,7 +42,7 @@ public class Network {
             sigmaFull[level - 1] = new double[neuronsInLevel[level]];
             int previousLevelLength = neuronNet[level - 1].length;
             for (int j=0; j<neuronNet[level].length;j++)
-                neuronNet[level][j] = new HiddenNeuron(level,j, previousLevelLength);
+                neuronNet[level][j] = new HiddenNeuron(level,j, previousLevelLength,neuronsInLevel.length);
         }
         initializeDarkSide();
     }
@@ -65,6 +81,10 @@ public class Network {
         }
     }
 
+    public void showLastLayerOutputs(){
+
+    }
+
 
     public double startNetworking(double in[]){
         //По логике даем сигнал на входные нейроны
@@ -89,6 +109,36 @@ public class Network {
         }
 
         return 0;
+
+    }
+
+    public double[] startNetworkingWithTestSample(double in[],double answer[]){
+        startNetworking(in);
+        int lastLayerNumber = neuronNet.length-1;
+        int neuronInLastLayer = neuronNet[lastLayerNumber].length;
+        double[] result = new double[neuronInLastLayer];
+        int counter=0;
+        int answerIndex=100;
+        int index=0;
+        for (int j=0; j<neuronInLastLayer;j++){
+            result[j]=neuronNet[lastLayerNumber][j].getOut();
+            if(result[j]>0.70){
+                counter++;
+                index=j;
+            }
+            //System.out.println("Out ["+j+"]: "+result[j]);
+        }
+
+        if(counter==1){
+            System.out.print("Думаю в семпле число: "+index+" Правильный ответ: ");
+        }else {System.out.println("Что-то пошло не так, не могу определится с ответом");}
+        for (int a=0; a<answer.length;a++){
+            if(answer[a]>0){
+                System.out.println(a);
+            }
+        }
+
+        return result;
 
     }
 
@@ -204,26 +254,35 @@ public class Network {
     }
 
     //--8-- Выполняем Backpropagation для массива сэмплов до достижения желаемой величины ошибки
-    public void runBPA(double[][] inM, double[][] outM, double accuracy){
-        double tE=2;
-        double tempTE=2;
+    public int runBPA(double[][] inM, double[][] outM, double accuracy){
+        networkError =2;
+        double networkErrorTemp=2;
         int counter=0;
-        int gcounter=0;
-        while (tE>accuracy){tempTE=0;
+        while (networkError >accuracy){networkErrorTemp=0;
+        learningIterations++;
             for (int i=0;i<inM.length;i++) {
                 counter++;
-                gcounter++;
-                if(gcounter==10000){showNetworkData();gcounter=0;}
                 RunBackpropagation(inM[i],outM[i]);
-                //RunBackpropagation(inM[i],outM[i]);
-                //RunBackpropagation(inM[i],outM[i]);
                 startNetworking(inM[i]);
                 for (int k = 0; k < neuronNet[neuronNet.length - 1].length; k++) {
-                    tempTE += Math.pow(outM[i][k] - neuronNet[neuronNet.length - 1][k].getOut(), 2);
+                    networkErrorTemp += Math.pow(outM[i][k] - neuronNet[neuronNet.length - 1][k].getOut(), 2);
                 }
-                System.out.println("Итерация: "+counter+" Вход ["+neuronNet[0][0].getOut()+"]["+neuronNet[0][1].getOut()+"], Выход[2][0]: "+neuronNet[2][0].getOut()+" ,Ошибка: "+tE);
+                //System.out.println("Итерация: "+counter+" Вход ["+neuronNet[0][0].getOut()+"]["+neuronNet[0][1].getOut()+"], Выход[2][0]: "+neuronNet[2][0].getOut()+" ,Ошибка: "+ networkError);
+                System.out.println("Итерация: "+counter+" ,Ошибка: "+ networkError);
+
             }
-            tE=tempTE;
+            networkError =networkErrorTemp;
+
+            //super.setChanged();
         }
+        return counter;
     }
+
+    /*public class GUIObserver extends Observable{
+        public double error;
+        public void action (double e){
+            error=e;
+            this.notifyObservers();
+        }
+    }*/
 }

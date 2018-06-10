@@ -27,15 +27,29 @@ public class NeuronBase {
 
     public double[] getInputWeight(){return inputsWeight;}
 
+    public void setInputsWeight (double[] in) {inputsWeight = in;}
+
+    public void setInputsValue (double[] in) {inputsValue = in;}
+
     public void setInputsValue(double v, int num){inputsValue[num]=v;}
 
     public void setInputsSigma(double s, int num){inputsSigma[num]=s;}
 
+    public void setInputsSigma(double[] in){inputsSigma=in;}
+
+    public double[] getInputsSigma(){return inputsSigma;}
+
     public void setSigmaSum (double s){sigmaSum =s;}
+
+    public double getSigmaSum (){return sigmaSum;}
 
     public double getSigmaToTrasfer (){return sigmaToTrasfer;}
 
+    public void setSigmaToTrasfer(double in){sigmaToTrasfer=in;}
+
     public double getInputValue(int num){return inputsValue[num];}
+
+    public double[] getInputsValue(){return inputsValue;}
 
     public double getOut(){
         return out;
@@ -45,7 +59,15 @@ public class NeuronBase {
 
     public void setEWVector(double[] v){vector = v;}
 
+    public double[] getVector(){return vector;}
+
     public double getSum(){return sum;}
+
+    public void setSum(double in){sum = in;}
+
+    public double[] getdW(){return dW;}
+
+    public void setdW(double[] in){dW=in;}
 
     //------------------Методы--------------------------------//
 

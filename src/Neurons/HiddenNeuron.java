@@ -3,20 +3,46 @@ package Neurons;
 public class HiddenNeuron extends NeuronBase{
 
     private double[] lastDW;
-    private double alpha=0.2; //скорость обучения
-    private double beta=0.1; //инерция
+    private static double ALPHA =1; //скорость обучения
+    private static double BETA =0.00001; //инерция
+    //private double gamma=1;// коэффициент ускорение обучения
+    //private double tetta;
+    private int layersInNetwork;
 
-    public HiddenNeuron(int layer, int neuronNumber, int previousLevelLength){
+    //---Get/Set
+
+    public double[] getLastDW(){return lastDW;}
+
+    public static double getAlpha(){return ALPHA;}
+    public static double getBeta(){return BETA;}
+
+    public static void setALPHA(double newAlpha){
+        HiddenNeuron.ALPHA=newAlpha;
+        System.out.println("Изменена скорость обучения: "+ALPHA);
+    }
+
+    public static void setBETA(double newBeta){
+        HiddenNeuron.BETA=newBeta;
+        System.out.println("Изменена инерция обучения: "+BETA);
+    }
+
+    public void setLastDW(double[] in){lastDW=in;}
+
+    //---Metods
+
+    public HiddenNeuron(int layer, int neuronNumber, int previousLevelLength, int layersInNetwork){
         this.layerLevel = layer;
         this.neuronNumber = neuronNumber;
+        this.layersInNetwork = layersInNetwork;
         initializeNeuron(previousLevelLength);
         setRandomWeight();
     }
 
     //Инициализация нейрона
     private void initializeNeuron (int inputsMassiveLenght){
-        layerLevel = 0;
-        neuronNumber = 0;
+        //layerLevel = 0;
+        //neuronNumber = 0;
+        //tetta=Math.pow(gamma,(layersInNetwork-1-layerLevel));
         inputsWeight = new double[inputsMassiveLenght];
         inputsValue = new double[inputsMassiveLenght];
         out = 0;
@@ -24,7 +50,7 @@ public class HiddenNeuron extends NeuronBase{
     //Устанавливаем рандомные веса
     private void setRandomWeight (){
         for (int i=0; i<inputsWeight.length;i++){
-            inputsWeight[i] = Math.random()/2+0.5;
+            inputsWeight[i] = Math.random()/5;
         }
     }
     //Инициализация нейрона для backpropagation
@@ -49,15 +75,18 @@ public class HiddenNeuron extends NeuronBase{
     //--5-- Считаем изменение весов
     public void calcDW(){
         for (int j=0; j<dW.length;j++){
-            dW[j]=alpha*sigmaToTrasfer*inputsValue[j];
+            //dW[j]=tetta*ALPHA*sigmaToTrasfer*inputsValue[j];
+            dW[j]= ALPHA *sigmaToTrasfer*inputsValue[j];
+            //System.out.println("Layer "+layerLevel+" dW:"+dW[j]);
         }
     }
 
     //--5.1-- Применяем изменение весов
     public void applyDW(){
         for (int j=0;j<inputsWeight.length;j++){
-            inputsWeight[j]+=dW[j]+beta*lastDW[j];
-            lastDW[j]=dW[j]+beta*lastDW[j];
+            //inputsWeight[j]+=dW[j];
+            inputsWeight[j]+=(dW[j]+ BETA *lastDW[j]);
+            lastDW[j]=dW[j]+lastDW[j];
         }
     }
 }

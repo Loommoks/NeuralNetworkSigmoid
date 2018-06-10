@@ -1,43 +1,51 @@
 public class NetworkStarter {
 
-    public static final double NETWORK_LEARN_ACCURACY = 0.001;
+    public static double NETWORK_LEARN_ACCURACY = 0.005;
+    protected static int inputsCount  = 35;
+    protected static int hiddenLayerOneCount = 22;
+    protected static int hiddenLayerTwoCount = 16;
+    protected static int outputsCount = 10;
 
-    public static void main (String[] args){
+    public static int getInputsCount(){return inputsCount;}
+    public static int getHiddenLayerOneCount(){return hiddenLayerOneCount;}
+    public static int getHiddenLayerTwoCount(){return hiddenLayerTwoCount;}
+    public static int getOutputsCount(){return outputsCount;}
+    public static double getNetworkLearnAccuracy(){return NETWORK_LEARN_ACCURACY;}
 
-        int inputsCount  = 2;
-        int hiddenLayerCount = 3;
-        int outputsCount = 2;
-        
+    public static void setInputsCount(int inputsCount) {
+        NetworkStarter.inputsCount = inputsCount;
+        System.out.println("Установлено количество нейронов входного слоя: "+inputsCount);
+    }
+
+    public static void setNetworkLearnAccuracy(double newAccuracy){
+        NetworkStarter.NETWORK_LEARN_ACCURACY = newAccuracy;
+        System.out.println("Установлено новая точность обучения сети: "+NETWORK_LEARN_ACCURACY);
+        GUIPanel.writeToConsole("Установлено новая точность обучения сети: "+Double.toString(NETWORK_LEARN_ACCURACY)+"\n");
+    }
+
+    public static int[] getNeuronsInLayers(){
+        int[] neuronsInLayers = {
+            inputsCount,
+            hiddenLayerOneCount,
+            hiddenLayerTwoCount,
+            outputsCount
+        };
+        return neuronsInLayers;
+    }
+
+    public static void Start (Network Net, double[][] inputs, double[][] outputs){
+
         int[] neuronsInLayers = {
                 inputsCount,
-                hiddenLayerCount,
+                hiddenLayerOneCount,
+                hiddenLayerTwoCount,
                 outputsCount
         };
 
-        Network Net = new Network();
         Net.initializeNetwork(neuronsInLayers);
 
         Net.showNetworkData();
-        Net.runBPA(getSamples(), getSampleAnswers(), NETWORK_LEARN_ACCURACY);
+        Net.runBPA(inputs, outputs, NETWORK_LEARN_ACCURACY);
         Net.showNetworkData();
     }
-
-    private static double[][] getSampleAnswers() {
-        return new double[][]{{0,1},{1,0},{1,0},{0,1}};
-    }
-
-
-    private static double[][] getSamples() {
-        double[][] sample = new double[4][];
-        double[] sample1 = {0,0};
-        sample[0] = sample1;
-        double[] sample2 = {0,1};
-        sample[1] = sample2;
-        double[] sample3 = {1,0};
-        sample[2] = sample3;
-        double[] sample4 = {1,1};
-        sample[3] = sample4;
-        return sample;
-    }
-
 }
