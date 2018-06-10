@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GuiStyler {
+public class GuiFactory {
     public static JPanel makeLeftColum(){
         JPanel panelLeftToReturn = new JPanel();
         panelLeftToReturn.setLayout(new BoxLayout(panelLeftToReturn, BoxLayout.Y_AXIS));
@@ -29,13 +29,24 @@ public class GuiStyler {
         panelLeft.add(one,constraints);
 
         //--Вторая строка сетки
+        GuiPanelRowArgs args = new GuiPanelRowArgs();
 
-        constraints.gridx = 1;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.gridwidth = 1;
-        //constraints.gridheight = 1;
+        args.caption = "Input neurons";
+        args.defaulTextFieldLenght =2;
+        args.defaultValue = Integer.toString(NetworkStarter.getInputsCount());
+
+        args.listener = e -> NetworkStarter.setInputsCount(Integer.parseInt(fieldInputCounter.getText())));
+
+        addRowTo(panelLeft, args);
+
+        /*
+        GridBagConstraints constraints2 = new GridBagConstraints();
+
+        constraints2.gridx = 1;
+        constraints2.anchor = GridBagConstraints.WEST;
+        constraints2.gridwidth = 1;
         JLabel two = makeJLabel("Input neurons");
-        panelLeft.add(two,constraints);
+        panelLeft.add(two,constraints2);
 
         constraints.gridx = GridBagConstraints.RELATIVE;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -43,9 +54,9 @@ public class GuiStyler {
         JTextField fieldInputCounter = makeTextField(2);
         fieldInputCounter.setBorder(null);
         fieldInputCounter.setText(Integer.toString(NetworkStarter.getInputsCount()));
-        fieldInputCounter.addActionListener(e -> NetworkStarter.setInputsCount(Integer.parseInt(fieldInputCounter.getText())));
+        fieldInputCounter.addActionListener(
         panelLeft.add(fieldInputCounter,constraints);
-
+        */
 
         //--Третья строка сетки
         constraints.gridwidth = 1;
@@ -251,6 +262,7 @@ public class GuiStyler {
         labelNetworkSettings.setHorizontalAlignment(JLabel.CENTER);
         return labelNetworkSettings;
     }
+
 
     public static JCheckBox makeCheckBox (){
         JCheckBox hiddenLayerOneUsageCheckBox = new JCheckBox();

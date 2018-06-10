@@ -19,7 +19,7 @@ public class GUIPanel {
     public void go(){
         frame = new JFrame();
         JPanel panelRight = new JPanel();
-        JPanel panelLeft = GuiStyler.makeLeftColum();
+        JPanel panelLeft = GuiFactory.makeLeftColum();
         panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
         //panelRight.setLayout(new GridLayout(10,2,5,20));
 
