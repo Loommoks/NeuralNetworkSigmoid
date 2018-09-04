@@ -3,10 +3,10 @@ package Neurons;
 public class HiddenNeuron extends NeuronBase{
 
     private double[] lastDW;
-    private static double ALPHA =1; //скорость обучения
-    private static double BETA =0.00001; //инерция
-    //private double gamma=1;// коэффициент ускорение обучения
-    //private double tetta;
+    private static double ALPHA =0.00003; //скорость обучения
+    private static double BETA =0.0; //инерция
+    //private double gamma=1000;// коэффициент ускорение обучения
+    private double tetta=1;
     private int layersInNetwork;
 
     //---Get/Set
@@ -50,7 +50,7 @@ public class HiddenNeuron extends NeuronBase{
     //Устанавливаем рандомные веса
     private void setRandomWeight (){
         for (int i=0; i<inputsWeight.length;i++){
-            inputsWeight[i] = Math.random()/5;
+            inputsWeight[i] = Math.random()-0.5;
         }
     }
     //Инициализация нейрона для backpropagation
@@ -85,7 +85,7 @@ public class HiddenNeuron extends NeuronBase{
     public void applyDW(){
         for (int j=0;j<inputsWeight.length;j++){
             //inputsWeight[j]+=dW[j];
-            inputsWeight[j]+=(dW[j]+ BETA *lastDW[j]);
+            inputsWeight[j]=tetta*inputsWeight[j]+(dW[j]+ BETA *lastDW[j]);
             lastDW[j]=dW[j]+lastDW[j];
         }
     }

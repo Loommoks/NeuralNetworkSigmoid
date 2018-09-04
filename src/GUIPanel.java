@@ -1,14 +1,25 @@
+import Neurons.HiddenNeuron;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.DoubleConsumer;
+
 
 public class GUIPanel {
     JFrame frame;
     static JTextArea text;
     Network net;
     ArrayList<Sample> samples;
+    //int[] mnistLabelstemp;
+    //int[][] mnistImagestemp;
+    //LinkedList<double[]> mnistLabels;
+    //LinkedList<double[]> mnistImages;
+    LinkedList<Sample> mnistSamples = new LinkedList<>();
 
 
     public static void main (String[] args) {
@@ -39,8 +50,21 @@ public class GUIPanel {
 
         JButton buttonLoadNetwork = new JButton("Load Network");
         buttonLoadNetwork.addActionListener(new networkLoader());
+
+        JButton buttonLoadMnistSamples = new JButton("Load MNIST Samples");
+        buttonLoadMnistSamples.addActionListener(new mnistSamplesLoader());
+
+        JButton buttonStartTrainingWithMnist = new JButton("Start Training MNIST");
+        buttonStartTrainingWithMnist.addActionListener(new mnistTrainingStarter());
+
+        JButton buttonMnistTestSamplesLoader = new JButton("Load&Start Testing MNIST");
+        buttonMnistTestSamplesLoader.addActionListener(new mnistTestSamplesLoader());
+
         //--
         //--Left Panel Buttons
+
+        JButton buttonContinueMNISTLearning = new JButton("Continue MNIST Learning");
+        buttonContinueMNISTLearning.addActionListener(new mnistSamplesLoaderToContinue());
 
 
         //--
@@ -62,6 +86,10 @@ public class GUIPanel {
         panelRight.add(buttonLoadTestSample);
         panelRight.add(buttonSaveNetworkParameters);
         panelRight.add(buttonLoadNetwork);
+        panelRight.add(buttonLoadMnistSamples);
+        panelRight.add(buttonStartTrainingWithMnist);
+        panelRight.add(buttonContinueMNISTLearning);
+        panelRight.add(buttonMnistTestSamplesLoader);
         panelRight.setBackground(Color.DARK_GRAY);
 
 
@@ -80,7 +108,7 @@ public class GUIPanel {
     }
 
     public void stateConstructor(JPanel conditionPanel, String condition){
-        text = new JTextArea(6,30);
+        text = new JTextArea(11,30);
         text.setBackground(Color.DARK_GRAY);
         text.setLineWrap(false);
         text.setForeground(Color.ORANGE);;
@@ -124,7 +152,8 @@ public class GUIPanel {
     public class networkSaver implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             WrireAFile wrireAFile = new WrireAFile();
-            wrireAFile.write(net);
+            wrireAFile.autoSave(net,0);
+            //wrireAFile.write(net);
         }
     }
 
@@ -132,6 +161,107 @@ public class GUIPanel {
         public void actionPerformed(ActionEvent e) {
             LoadNetwork loadNetwork = new LoadNetwork();
             net = loadNetwork.go();
+        }
+    }
+
+    public class mnistSamplesLoader implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int[] labelsToConvert = MnistReader.getLabels("C:\\train-labels.idx1-ubyte");
+            List<int[][]> imagesToConvert = MnistReader.getImages("C:\\train-images.idx3-ubyte");
+
+            for (int i=0;i<10000;i++){
+                double[] temp = new double[10];
+                temp[labelsToConvert[i]]=1;
+                mnistSamples.add(new Sample());
+                mnistSamples.get(i).setSampleOut(temp);
+                mnistSamples.get(i).setSampleIn(convert2DIntegerArraryTo1DDoubleArray(imagesToConvert.get(i)));
+            }
+        }
+    }
+
+    public class mnistSamplesLoaderToContinue implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int[] labelsToConvert = MnistReader.getLabels("C:\\train-labels.idx1-ubyte");
+            List<int[][]> imagesToConvert = MnistReader.getImages("C:\\train-images.idx3-ubyte");
+
+            for (int i=0;i<60000;i++){
+                double[] temp = new double[10];
+                temp[labelsToConvert[i]]=1;
+                mnistSamples.add(new Sample());
+                mnistSamples.get(i).setSampleOut(temp);
+                mnistSamples.get(i).setSampleIn(convert2DIntegerArraryTo1DDoubleArray(imagesToConvert.get(i)));
+            }
+
+            WrireAFile wrireAFile = new WrireAFile();
+            double[] savePoints =  {0.91, 0.92, 0.93, 0.94, 0.95, 0.955, 0.96, 0.965, 0.97, 0.975, 0.98 };
+            for (double offset: savePoints) {
+                NetworkStarter.Start(net, mnistSamples, offset, false);
+                wrireAFile.autoSave(net, (int) (offset * 1000));
+            }
+        }
+    }
+
+    public class mnistTestSamplesLoader implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int[] labelsToConvert = MnistReader.getLabels("C:\\t10k-labels.idx1-ubyte");
+            List<int[][]> imagesToConvert = MnistReader.getImages("C:\\t10k-images.idx3-ubyte");
+
+            for (int i=0;i<labelsToConvert.length;i++){
+                double[] temp = new double[10];
+                temp[labelsToConvert[i]]=1;
+                mnistSamples.add(new Sample());
+                mnistSamples.get(i).setSampleOut(temp);
+                mnistSamples.get(i).setSampleIn(convert2DIntegerArraryTo1DDoubleArray(imagesToConvert.get(i)));
+            }
+            int rightAnswersCounter=0;
+            double percentage;
+
+            for (int i=0;i<mnistSamples.size();i++){
+                if (net.startNetworkingWithTestSampleAllIn(
+                        mnistSamples.get(i).getSampleIn(),
+                        mnistSamples.get(i).getSampleOut())
+                        ){rightAnswersCounter++;}
+            }
+            percentage = 100*((double)rightAnswersCounter/mnistSamples.size());
+            System.out.println("Процент успешных распознаваний: "+percentage+" "+rightAnswersCounter+"/"+mnistSamples.size());
+        }
+    }
+
+    public class mnistTrainingStarter implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            net = new Network();
+            //NetworkStarter.Start(net,mnistImages,mnistLabels);
+            NetworkStarter.Start(net,mnistSamples,0.70,true);
+            WrireAFile wrireAFile = new WrireAFile();
+            wrireAFile.autoSave(net,700);
+            NetworkStarter.Start(net,mnistSamples,0.75,false);
+            wrireAFile.autoSave(net,750);
+            HiddenNeuron.setALPHA(HiddenNeuron.getAlpha()/5);
+            HiddenNeuron.setBETA(HiddenNeuron.getBeta()/10);
+            NetworkStarter.Start(net,mnistSamples,0.80,false);
+            wrireAFile.autoSave(net,800);
+            NetworkStarter.Start(net,mnistSamples,0.85,false);
+            wrireAFile.autoSave(net,850);
+            HiddenNeuron.setALPHA(HiddenNeuron.getAlpha()/5);
+            HiddenNeuron.setBETA(HiddenNeuron.getBeta()/10);
+            NetworkStarter.Start(net,mnistSamples,0.90,false);
+            wrireAFile.autoSave(net,900);
+            NetworkStarter.Start(net,mnistSamples,0.95,false);
+            wrireAFile.autoSave(net,950);
+            NetworkStarter.Start(net,mnistSamples,0.97,false);
+            wrireAFile.autoSave(net,970);
+            NetworkStarter.Start(net,mnistSamples,0.98,false);
+            wrireAFile.autoSave(net,980);
+            NetworkStarter.Start(net,mnistSamples,0.99,false);
+            wrireAFile.autoSave(net,990);
+            NetworkStarter.Start(net,mnistSamples,0.995,false);
+            /*HiddenNeuron.setALPHA(HiddenNeuron.getAlpha()/5);
+            HiddenNeuron.setBETA(HiddenNeuron.getBeta()/10);
+            NetworkStarter.Start(net,mnistSamples,0.97,false);*/
+
+
+            wrireAFile.autoSave(net,995);
+
         }
     }
 
@@ -167,6 +297,18 @@ public class GUIPanel {
     public static void writeToConsole (String toWrite) {
         text.append(toWrite);
         text.setCaretPosition(text.getDocument().getLength());
+    }
+
+    public double[] convert2DIntegerArraryTo1DDoubleArray(int [][] arrayToConvert){
+        double[] arrayToReturn = new double[arrayToConvert.length*arrayToConvert[0].length];
+        int k=0;
+        for(int i=0;i<arrayToConvert.length;i++){
+            for (int j=0;j<arrayToConvert[i].length;j++){
+                arrayToReturn[k]=arrayToConvert[i][j];
+                k++;
+            }
+        }
+        return arrayToReturn;
     }
 
 }

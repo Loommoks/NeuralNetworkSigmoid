@@ -2,6 +2,9 @@ import Neurons.HiddenNeuron;
 import Neurons.InNeuron;
 import Neurons.NeuronBase;
 
+import java.util.Collections;
+import java.util.LinkedList;
+
 
 public class Network {
     NeuronBase[][] neuronNet;
@@ -112,15 +115,17 @@ public class Network {
 
     }
 
-    public double[] startNetworkingWithTestSample(double in[],double answer[]){
+    public boolean startNetworkingWithTestSample(double in[],double answer[]){
         startNetworking(in);
         int lastLayerNumber = neuronNet.length-1;
-        int neuronInLastLayer = neuronNet[lastLayerNumber].length;
-        double[] result = new double[neuronInLastLayer];
+        int neuronsInLastLayer = neuronNet[lastLayerNumber].length;
+        double[] result = new double[neuronsInLastLayer];
         int counter=0;
-        int answerIndex=100;
+        //int answerIndex=100;
+        boolean answerIsRight = false;
+        int rightAnswer=-1;
         int index=0;
-        for (int j=0; j<neuronInLastLayer;j++){
+        for (int j=0; j<neuronsInLastLayer;j++){
             result[j]=neuronNet[lastLayerNumber][j].getOut();
             if(result[j]>0.70){
                 counter++;
@@ -129,16 +134,60 @@ public class Network {
             //System.out.println("Out ["+j+"]: "+result[j]);
         }
 
-        if(counter==1){
-            System.out.print("Думаю в семпле число: "+index+" Правильный ответ: ");
-        }else {System.out.println("Что-то пошло не так, не могу определится с ответом");}
         for (int a=0; a<answer.length;a++){
             if(answer[a]>0){
-                System.out.println(a);
+                rightAnswer=a;
             }
         }
+        //System.out.print("Правильный ответ: "+rightAnswer+" ");
+        if(counter==1){
+            //System.out.print("Думаю в семпле число: "+index+" ");
+            if (index==rightAnswer){
+                //System.out.println("Ура! Угадал  ");
+                answerIsRight=true;
+            }
+        }else {//System.out.println("Что-то пошло не так, не могу определится с ответом");
+             }
 
-        return result;
+        return answerIsRight;
+
+    }
+
+    public boolean startNetworkingWithTestSampleAllIn(double in[],double answer[]){
+        startNetworking(in);
+        int lastLayerNumber = neuronNet.length-1;
+        int neuronsInLastLayer = neuronNet[lastLayerNumber].length;
+        double[] result = new double[neuronsInLastLayer];
+        int counter=0;
+        //int answerIndex=100;
+        boolean answerIsRight = false;
+        int rightAnswer=-1;
+        double maxPossibilityAnswer=0;
+        int index=0;
+        for (int j=0; j<neuronsInLastLayer;j++){
+            result[j]=neuronNet[lastLayerNumber][j].getOut();
+            if(result[j]>maxPossibilityAnswer){
+                maxPossibilityAnswer=result[j];
+                index=j;
+            }
+            //System.out.println("Out ["+j+"]: "+result[j]);
+        }
+
+        for (int a=0; a<answer.length;a++){
+            if(answer[a]>0){
+                rightAnswer=a;
+            }
+        }
+        //System.out.print("Правильный ответ: "+rightAnswer+" ");
+
+            //System.out.print("Думаю в семпле число: "+index+" ");
+            if (index==rightAnswer){
+                //System.out.println("Ура! Угадал  ");
+                answerIsRight=true;
+            }
+
+
+        return answerIsRight;
 
     }
 
@@ -268,10 +317,113 @@ public class Network {
                     networkErrorTemp += Math.pow(outM[i][k] - neuronNet[neuronNet.length - 1][k].getOut(), 2);
                 }
                 //System.out.println("Итерация: "+counter+" Вход ["+neuronNet[0][0].getOut()+"]["+neuronNet[0][1].getOut()+"], Выход[2][0]: "+neuronNet[2][0].getOut()+" ,Ошибка: "+ networkError);
-                System.out.println("Итерация: "+counter+" ,Ошибка: "+ networkError);
+                System.out.println("Итерация: "+learningIterations+" ,Ошибка: "+ networkError);
 
             }
             networkError =networkErrorTemp;
+
+            //super.setChanged();
+        }
+        return counter;
+    }
+
+    public int runBPA(LinkedList<double[]> inM, LinkedList<double[]> outM, double accuracy){
+        networkError =2;
+        double networkErrorTemp=2;
+        int counter=0;
+        int counter2=0;
+        int rightanswerscounter=0;
+        double percentage;
+        while (networkError >accuracy){
+            networkErrorTemp=0;
+            learningIterations++;
+            counter=0;
+            rightanswerscounter=0;
+            LinkedList<double[]> outMTemp = outM;
+            LinkedList<double[]> inMTemp = inM;
+            for (int i=0;i<inM.size();i++) {
+                counter++;
+
+                if(counter==50){
+                    counter=0;
+                    //counter2++;
+                    //System.out.print("Процент выполнения эпохи: "+counter2+"%");
+                    //System.out.println("   Эпоха: "+learningIterations+"  BPA Sample: "+i+",  Ошибка: "+ networkError);
+                }
+                for (int t=0;t<10;t++) {
+                    RunBackpropagation(inM.get(i), outM.get(i));
+                }
+
+                RunBackpropagation(inM.get(i),outM.get(i));
+                //RunBackpropagation(inM.get(i),outM.get(i));
+                //RunBackpropagation(inM.get(i),outM.get(i));
+                //RunBackpropagation(inM.get(i),outM.get(i));
+                //startNetworking(inM.get(i));
+                for (int k = 0; k < neuronNet[neuronNet.length - 1].length; k++) {
+                    networkErrorTemp += Math.pow(outM.get(i)[k] - neuronNet[neuronNet.length - 1][k].getOut(), 2);
+                }
+                //System.out.println("Итерация: "+counter+" Вход ["+neuronNet[0][0].getOut()+"]["+neuronNet[0][1].getOut()+"], Выход[2][0]: "+neuronNet[2][0].getOut()+" ,Ошибка: "+ networkError);
+                //System.out.println("Итерация: "+learningIterations+"BPA Sample: "+i+" ,Ошибка: "+ networkError);
+
+            }
+            for (int i=0;i<inM.size();i++){
+                if (startNetworkingWithTestSample(inM.get(i),outM.get(i))){rightanswerscounter++;}
+            }
+            percentage = ((double)rightanswerscounter/300);
+            System.out.println("   Эпоха: "+learningIterations+",  Ошибка: "+ networkError+"  Правильных ответов: "+percentage*100+"%");
+            networkError =networkErrorTemp;
+
+            //super.setChanged();
+        }
+        return counter;
+    }
+
+    public int runBPA(LinkedList<Sample> samples, double targetPercentage){
+        networkError =2;
+        double networkErrorTemp=2;
+        int counter=0;
+        int counter2=0;
+        int rightanswerscounter=0;
+        double percentage=0;
+        while (percentage <targetPercentage){
+            networkErrorTemp=0;
+            learningIterations++;
+            counter=0;
+            rightanswerscounter=0;
+            Collections.shuffle(samples);
+            for (int i=0;i<samples.size();i++) {
+                counter++;
+
+                /*if(counter==50){
+                    counter=0;
+                    //counter2++;
+                    //System.out.print("Процент выполнения эпохи: "+counter2+"%");
+                    //System.out.println("   Эпоха: "+learningIterations+"  BPA Sample: "+i+",  Ошибка: "+ networkError);
+                }*/
+                for (int t=0;t<1;t++) {
+                    RunBackpropagation(samples.get(i).getSampleIn(), samples.get(i).getSampleOut());
+                }
+
+                //RunBackpropagation(samples.get(i).getSampleIn(), samples.get(i).getSampleOut());
+
+                for (int k = 0; k < neuronNet[neuronNet.length - 1].length; k++) {
+                    networkErrorTemp += Math.pow(samples.get(i).getSampleOutI(k) - neuronNet[neuronNet.length - 1][k].getOut(), 2);
+                }
+                //System.out.println("Итерация: "+counter+" Вход ["+neuronNet[0][0].getOut()+"]["+neuronNet[0][1].getOut()+"], Выход[2][0]: "+neuronNet[2][0].getOut()+" ,Ошибка: "+ networkError);
+                //System.out.println("Итерация: "+learningIterations+"BPA Sample: "+i+" ,Ошибка: "+ networkError);
+
+            }
+            for (int i=0;i<samples.size();i++){
+                if (startNetworkingWithTestSampleAllIn(samples.get(i).getSampleIn(),samples.get(i).getSampleOut())){rightanswerscounter++;}
+            }
+            networkError =networkErrorTemp;
+            percentage = ((double)rightanswerscounter/samples.size());
+            System.out.println("   Эпоха: "+learningIterations
+                    +",  Ошибка: "+ networkError
+                    +"  Правильных ответов: "+percentage*100+"%");
+
+
+            if (percentage>0.97){break;}
 
             //super.setChanged();
         }

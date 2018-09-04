@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class WrireAFile {
     private Network net;
@@ -14,6 +16,26 @@ public class WrireAFile {
         JFileChooser fileSave = new JFileChooser();
         fileSave.showSaveDialog(new JFrame());
         saveFile(fileSave.getSelectedFile());
+    }
+
+    public void autoSave(Network net, int index){
+        this.net = net;
+        Date date = new Date();
+        SimpleDateFormat saveFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm");
+        System.out.println("Сегодняшняя дата:" +saveFormat.format(date));
+        File newFile = new File("C://NetworksSaves//Network-"
+                +Integer.toString(net.getLearningIterations())
+                +"-Winner"+Integer.toString(index)+"-"
+                +saveFormat.format(date)
+                +".txt"
+        );
+        try {
+            newFile.createNewFile();
+
+        } catch (IOException ex){
+            System.out.println(ex.getMessage());
+        }
+        saveFile(newFile);
     }
 
     public void saveFile(File file){

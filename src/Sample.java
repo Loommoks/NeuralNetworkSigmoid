@@ -2,6 +2,10 @@ public class Sample {
     double[] sampleInI;
     double[] sampleOutI;
 
+    public double[] getSampleIn (){return sampleInI;}
+
+    public double[] getSampleOut (){return sampleOutI;}
+
     public void setSampleIn(double[] input){
         sampleInI=input;
     }

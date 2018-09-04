@@ -1,9 +1,11 @@
+import java.util.LinkedList;
+
 public class NetworkStarter {
 
     public static double NETWORK_LEARN_ACCURACY = 0.005;
-    protected static int inputsCount  = 35;
-    protected static int hiddenLayerOneCount = 22;
-    protected static int hiddenLayerTwoCount = 16;
+    protected static int inputsCount  = 784;
+    protected static int hiddenLayerOneCount = 78;
+    protected static int hiddenLayerTwoCount = 39;
     protected static int outputsCount = 10;
 
     public static int getInputsCount(){return inputsCount;}
@@ -47,5 +49,38 @@ public class NetworkStarter {
         Net.showNetworkData();
         Net.runBPA(inputs, outputs, NETWORK_LEARN_ACCURACY);
         Net.showNetworkData();
+    }
+
+    public static void Start (Network Net, LinkedList<double[]> inputs, LinkedList<double[]> outputs){
+
+        int[] neuronsInLayers = {
+                inputsCount,
+                hiddenLayerOneCount,
+                hiddenLayerTwoCount,
+                outputsCount
+        };
+
+        Net.initializeNetwork(neuronsInLayers);
+
+        Net.showNetworkData();
+        Net.runBPA(inputs, outputs, NETWORK_LEARN_ACCURACY);
+        Net.showNetworkData();
+    }
+
+    public static void Start (Network Net, LinkedList<Sample> samples, double targetPercentage, boolean initializeNewNetwork){
+
+        if (initializeNewNetwork){
+            int[] neuronsInLayers = {
+                    inputsCount,
+                    hiddenLayerOneCount,
+                    hiddenLayerTwoCount,
+                    outputsCount
+            };
+            Net.initializeNetwork(neuronsInLayers);
+        }
+
+        //Net.showNetworkData();
+        Net.runBPA(samples, targetPercentage);
+        //Net.showNetworkData();
     }
 }
