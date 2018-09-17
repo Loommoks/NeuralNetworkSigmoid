@@ -77,8 +77,14 @@ public class BestNetworkTrainer {
 
     public int testNetworkWithSamples(double[][] input, double[][] output, int networkIndex){
         int networkErrorsMade=0;
+        Propagator propagator = new Propagator();
         for (int k=0; k<input.length;k++) {
-            if (learningNetworks.get(networkIndex).startNetworkingWithTestSample(input[k],output[k])){
+
+            if (propagator.startPropagationWithTestSample(
+                    learningNetworks.get(networkIndex)
+                    ,input[k]
+                    ,output[k])
+                    ){
 
             } else {networkErrorsMade++;}
 

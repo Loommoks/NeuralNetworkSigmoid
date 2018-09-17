@@ -52,7 +52,8 @@ public class NetworkStarter {
         Net.initializeNetwork(neuronsInLayers);
 
         Net.showNetworkData();
-        Net.runBPA(inputs, outputs, NETWORK_LEARN_ACCURACY);
+        Backpropagator backpropagator = new Backpropagator(Net);
+        backpropagator.runBPA(inputs,outputs,NETWORK_LEARN_ACCURACY);
         Net.showNetworkData();
     }
 
@@ -68,8 +69,7 @@ public class NetworkStarter {
             Net.initializeNetwork(neuronsInLayers);
         }
 
-        //Net.showNetworkData();
-        Net.runBPA(samples, targetPercentage);
-        //Net.showNetworkData();
+        Backpropagator backpropagator = new Backpropagator(Net);
+        backpropagator.runBPA(samples,targetPercentage);
     }
 }

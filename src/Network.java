@@ -49,6 +49,26 @@ public class Network {
         neuronNet[layerIndex][neuronIndex].setSigmaSum(sigmaValue);
     }
 
+    public void calcSigmaToTransferForNeuron (int layerIndex, int neuronIndex) {
+        neuronNet[layerIndex][neuronIndex].calcSigmaToTransfer();
+    }
+
+    public void calcDWForHiddenNeuron (int layerIndex, int neuronIndex) {
+        ((HiddenNeuron)(neuronNet[layerIndex][neuronIndex])).calcDW();
+    }
+
+    public void applyDWForHiddenNeuron (int layerIndex, int neuronIndex) {
+        ((HiddenNeuron)(neuronNet[layerIndex][neuronIndex])).applyDW();
+    }
+
+    public void setInputSigmaForNeuron (int layerIndex, int neuronIndex, double inputSigma, int sigmaIndex) {
+        neuronNet[layerIndex][neuronIndex].setInputsSigma(inputSigma,sigmaIndex);
+    }
+
+    public double getSigmaToTransferFromNeuron (int layerIndex, int neuronIndex) {
+        return neuronNet[layerIndex][neuronIndex].getSigmaToTrasfer();
+    }
+
     public int getLearningIterations(){return learningIterations;}
 
     public int[] getNetworkDimension(){
@@ -272,7 +292,7 @@ public class Network {
             neuronNet[i][j].setSigmaSum(answer[j]-neuronNet[i][j].getOut());
         }
     }
-*/
+
     //--4.1-- Считаем итоговую сигму для всех нейронов i-го слоя
     public void calcSigmaToTransferForLayerI(int i){
         for (int j=0;j<neuronNet[i].length;j++){
@@ -358,6 +378,7 @@ public class Network {
         }
         return counter;
     }
+    */
 /*
     public int runBPA(LinkedList<double[]> inM, LinkedList<double[]> outM, double accuracy){
         networkError =2;
@@ -410,7 +431,7 @@ public class Network {
         return counter;
     }
 */
-
+/*
     public int runBPA(LinkedList<Sample> samples, double targetPercentage){
         networkError =2;
         double networkErrorTemp=2;
@@ -426,13 +447,13 @@ public class Network {
             Collections.shuffle(samples);
             for (int i=0;i<samples.size();i++) {
                 counter++;
-
+*/
                 /*if(counter==50){
                     counter=0;
                     //counter2++;
                     //System.out.print("Процент выполнения эпохи: "+counter2+"%");
                     //System.out.println("   Эпоха: "+learningIterations+"  BPA Sample: "+i+",  Ошибка: "+ networkError);
-                }*/
+                }*//*
                 for (int t=0;t<1;t++) {
                     RunBackpropagation(samples.get(i).getSampleIn(), samples.get(i).getSampleOut());
                 }
@@ -462,7 +483,7 @@ public class Network {
         }
         return counter;
     }
-
+*/
     /*public class GUIObserver extends Observable{
         public double error;
         public void action (double e){
