@@ -6,7 +6,7 @@ public class Propagator {
         for (int i=0; i<networkDimensions.length;i++){
             if (i==0) {
                 for (int j = 0; j < networkDimensions[i]; j++) {
-                    net.setInputsValue(i,j,in[j],0);
+                    net.setInputsValueForNeuron(i,j,in[j],0);
                     net.calcutaleSummatorForNeuron(i,j);
                     net.calculateActivationFunctionForNeuron(i,j);
                     net.transferSingnal(i,j);

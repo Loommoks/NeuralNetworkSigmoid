@@ -17,7 +17,7 @@ public class Network {
         return networkError;
     }
 
-    public void setInputsValue (int layerIndex, int neuronIndex, double inputValue, int inputIndex) {
+    public void setInputsValueForNeuron (int layerIndex, int neuronIndex, double inputValue, int inputIndex) {
         neuronNet[layerIndex][neuronIndex].setInputsValue(inputValue,inputIndex);
     }
 
@@ -31,6 +31,22 @@ public class Network {
 
     public double getOutFromNeuron (int layerIndex, int neuronIndex) {
         return neuronNet[layerIndex][neuronIndex].getOut();
+    }
+
+    public double getInputWeightForNeuron (int layerIndex, int neuronIndex, int weightIndex) {
+        return neuronNet[layerIndex][neuronIndex].getInputWeight(weightIndex);
+    }
+
+    public void setEWVectorForNeuron (int layerIndex, int neuronIndex, double[] vectorToSet) {
+        neuronNet[layerIndex][neuronIndex].setEWVector(vectorToSet);
+    }
+
+    public void calcSigmaSumForNeuron (int layerIndex, int neuronIndex) {
+        neuronNet[layerIndex][neuronIndex].calcSigmaSum();
+    }
+
+    public void setSigmaSumForNeuron (int layerIndex, int neuronIndex, double sigmaValue) {
+        neuronNet[layerIndex][neuronIndex].setSigmaSum(sigmaValue);
     }
 
     public int getLearningIterations(){return learningIterations;}
@@ -217,6 +233,7 @@ public class Network {
 
     }
 
+    /*
     //--1-- Считаем вектор весов для нейрона j
     public double[] calcEWVector (int i, int j){
         if (i>neuronNet.length-2){
@@ -255,7 +272,7 @@ public class Network {
             neuronNet[i][j].setSigmaSum(answer[j]-neuronNet[i][j].getOut());
         }
     }
-
+*/
     //--4.1-- Считаем итоговую сигму для всех нейронов i-го слоя
     public void calcSigmaToTransferForLayerI(int i){
         for (int j=0;j<neuronNet[i].length;j++){
@@ -298,7 +315,7 @@ public class Network {
         }
     }
 
-    //--7-- Выполняем Backpropagation
+    //--7-- Выполняем Backpropagator
     public void RunBackpropagation (double[] input, double[] cOutput){
         //Propagator propagation = new Propagator();
         //propagation.startPropagation(this,input);
@@ -317,7 +334,7 @@ public class Network {
         applyDW();
     }
 
-    //--8-- Выполняем Backpropagation для массива сэмплов до достижения желаемой величины ошибки
+    //--8-- Выполняем Backpropagator для массива сэмплов до достижения желаемой величины ошибки
     public int runBPA(double[][] inM, double[][] outM, double accuracy){
         networkError =2;
         double networkErrorTemp=2;
