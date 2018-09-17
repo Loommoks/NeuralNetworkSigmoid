@@ -2,6 +2,7 @@ package Neurons;
 
 public class InNeuron extends NeuronBase {
     public InNeuron(int neuronNumber){
+        //todo разобраться с зашлушкой, не плодить лишние сущности
         this.neuronNumber = neuronNumber;
         this.layerLevel = 0;
         inputsWeight = new double[1];

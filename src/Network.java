@@ -16,6 +16,23 @@ public class Network {
     public double getNetworkError(){
         return networkError;
     }
+
+    public void setInputsValue (int layerIndex, int neuronIndex, double inputValue, int inputIndex) {
+        neuronNet[layerIndex][neuronIndex].setInputsValue(inputValue,inputIndex);
+    }
+
+    public void calcutaleSummatorForNeuron (int layerIndex, int neuronIndex) {
+        neuronNet[layerIndex][neuronIndex].calculateSummator();
+    }
+
+    public void calculateActivationFunctionForNeuron (int layerIndex, int neuronIndex) {
+        neuronNet[layerIndex][neuronIndex].calculateActivationFunctionOut();
+    }
+
+    public double getOutFromNeuron (int layerIndex, int neuronIndex) {
+        return neuronNet[layerIndex][neuronIndex].getOut();
+    }
+
     public int getLearningIterations(){return learningIterations;}
 
     public int[] getNetworkDimension(){
@@ -83,12 +100,7 @@ public class Network {
             }
         }
     }
-
-    public void showLastLayerOutputs(){
-
-    }
-
-
+    /*
     public double startNetworking(double in[]){
         //По логике даем сигнал на входные нейроны
         //Далее в цикле проходим по всем нейронам каждого слоя и они передают значения на выход
@@ -190,6 +202,7 @@ public class Network {
         return answerIsRight;
 
     }
+    */
 
     public void transferSingnal(int x, int y){
         if (x>=neuronNet.length){System.out.print("Network layer exceeded");}
@@ -287,6 +300,8 @@ public class Network {
 
     //--7-- Выполняем Backpropagation
     public void RunBackpropagation (double[] input, double[] cOutput){
+        //Propagator propagation = new Propagator();
+        //propagation.startPropagation(this,input);
         startNetworking(input);
         calcSigmaSumForOutputLayer(cOutput);
         calcSigmaToTransferForLayerI(neuronNet.length-1);
@@ -326,7 +341,7 @@ public class Network {
         }
         return counter;
     }
-
+/*
     public int runBPA(LinkedList<double[]> inM, LinkedList<double[]> outM, double accuracy){
         networkError =2;
         double networkErrorTemp=2;
@@ -377,6 +392,7 @@ public class Network {
         }
         return counter;
     }
+*/
 
     public int runBPA(LinkedList<Sample> samples, double targetPercentage){
         networkError =2;

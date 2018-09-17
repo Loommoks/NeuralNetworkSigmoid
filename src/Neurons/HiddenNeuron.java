@@ -6,13 +6,12 @@ public class HiddenNeuron extends NeuronBase{
     private static double ALPHA =0.00003; //скорость обучения
     private static double BETA =0.0; //инерция
     //private double gamma=1000;// коэффициент ускорение обучения
-    private double tetta=1;
+    private double tetta=1; // сжимание веса для выхода из потенциальной ямы, 1 - без изменений
     private int layersInNetwork;
 
     //---Get/Set
 
     public double[] getLastDW(){return lastDW;}
-
     public static double getAlpha(){return ALPHA;}
     public static double getBeta(){return BETA;}
 
@@ -28,7 +27,7 @@ public class HiddenNeuron extends NeuronBase{
 
     public void setLastDW(double[] in){lastDW=in;}
 
-    //---Metods
+    //Конструктор нейрона скрытого слоя
 
     public HiddenNeuron(int layer, int neuronNumber, int previousLevelLength, int layersInNetwork){
         this.layerLevel = layer;
@@ -38,13 +37,12 @@ public class HiddenNeuron extends NeuronBase{
         setRandomWeight();
     }
 
+    //---Metods
+
     //Инициализация нейрона
-    private void initializeNeuron (int inputsMassiveLenght){
-        //layerLevel = 0;
-        //neuronNumber = 0;
-        //tetta=Math.pow(gamma,(layersInNetwork-1-layerLevel));
-        inputsWeight = new double[inputsMassiveLenght];
-        inputsValue = new double[inputsMassiveLenght];
+    private void initializeNeuron (int inputsMassiveLength){
+        inputsWeight = new double[inputsMassiveLength];
+        inputsValue = new double[inputsMassiveLength];
         out = 0;
     }
     //Устанавливаем рандомные веса

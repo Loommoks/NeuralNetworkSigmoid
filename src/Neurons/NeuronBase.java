@@ -73,9 +73,7 @@ public class NeuronBase {
 
     //Подсчет результата функции активации (сигмоида 1/(1+е^(-х)) )
     public void calculateActivationFunctionOut(){
-        double b;
-        b = 1/(1+(Math.pow(Math.E,-sum)));
-        out = b;
+        out = 1/(1+(Math.pow(Math.E,-sum)));
     }
 
     //Подсчет взешанной суммы
@@ -86,9 +84,6 @@ public class NeuronBase {
         }
         sum = inputSum;
     }
-
-
-
 
     //Функция активации новый метод
     public double aF(double in){

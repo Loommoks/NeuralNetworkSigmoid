@@ -8,6 +8,8 @@ public class NetworkStarter {
     protected static int hiddenLayerTwoCount = 39;
     protected static int outputsCount = 10;
 
+    //Get-Set
+
     public static int getInputsCount(){return inputsCount;}
     public static int getHiddenLayerOneCount(){return hiddenLayerOneCount;}
     public static int getHiddenLayerTwoCount(){return hiddenLayerTwoCount;}
@@ -27,6 +29,7 @@ public class NetworkStarter {
 
     public static int[] getNeuronsInLayers(){
         int[] neuronsInLayers = {
+                //todo будет работать только с 2-мя скрытыми слоями, исправить
             inputsCount,
             hiddenLayerOneCount,
             hiddenLayerTwoCount,
@@ -35,23 +38,9 @@ public class NetworkStarter {
         return neuronsInLayers;
     }
 
+    //Методы
+
     public static void Start (Network Net, double[][] inputs, double[][] outputs){
-
-        int[] neuronsInLayers = {
-                inputsCount,
-                hiddenLayerOneCount,
-                hiddenLayerTwoCount,
-                outputsCount
-        };
-
-        Net.initializeNetwork(neuronsInLayers);
-
-        Net.showNetworkData();
-        Net.runBPA(inputs, outputs, NETWORK_LEARN_ACCURACY);
-        Net.showNetworkData();
-    }
-
-    public static void Start (Network Net, LinkedList<double[]> inputs, LinkedList<double[]> outputs){
 
         int[] neuronsInLayers = {
                 inputsCount,
