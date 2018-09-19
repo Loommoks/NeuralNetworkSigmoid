@@ -140,11 +140,11 @@ public class GUIPanel {
         public void actionPerformed(ActionEvent a) {
             ReadAFile readAFile = new ReadAFile();
             samples = readAFile.read();
-
+            Propagator propagator = new Propagator();
             double[][] input = ReadAFile.arrayListToArrayConvertorInput(samples);
             double[][] output = ReadAFile.arrayListToArrayConvertorOutput(samples);
             for (int k=0; k<input.length;k++) {
-                net.startNetworkingWithTestSample(input[k],output[k]);
+                propagator.startPropagationWithTestSample(net,input[k],output[k]);
             }
         }
     }
@@ -215,9 +215,11 @@ public class GUIPanel {
             }
             int rightAnswersCounter=0;
             double percentage;
+            Propagator propagator = new Propagator();
 
             for (int i=0;i<mnistSamples.size();i++){
-                if (net.startNetworkingWithTestSampleAllIn(
+                if (propagator.startPropagationWithTestSampleAllIn(
+                        net,
                         mnistSamples.get(i).getSampleIn(),
                         mnistSamples.get(i).getSampleOut())
                         ){rightAnswersCounter++;}

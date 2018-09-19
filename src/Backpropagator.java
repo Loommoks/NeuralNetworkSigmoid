@@ -167,7 +167,7 @@ public class Backpropagator {
                 for (int k = 0; k < networkDimensions[networkDimensions.length-1]; k++) {
                     networkErrorTemp +=
                             Math.pow(samples.get(i).getSampleOutI(k)
-                                    - net.getOutFromNeuron(networkDimensions[networkDimensions.length-1],k), 2);
+                                    - net.getOutFromNeuron(networkDimensions.length-1,k), 2);
                 }
 
             }
